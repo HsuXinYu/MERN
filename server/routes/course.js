@@ -1,5 +1,3 @@
-const { castObject } = require("../models/user-model");
-
 const router = require("express").Router();
 const Course = require("../models").course;
 const courseValidation = require("../validation").courseValidation;
@@ -21,7 +19,21 @@ router.get("/", async (req, res) => {
   }
 });
 
-//查詢特定課程資訊
+//用課程名稱查詢課程資訊
+router.get("/findByName/:name", async (req, res) => {
+  let { name } = req.params;
+  try {
+    console.log(Course.find());
+    let courseFound = await Course.find({ title: name })
+      .populate("teacher", ["username", "email"])
+      .exec();
+    return res.send(courseFound);
+  } catch (e) {
+    return res.send(500).send(e);
+  }
+});
+
+//用課程ID查詢課程資訊
 router.get("/:_id", async (req, res) => {
   let { _id } = req.params;
   try {
@@ -32,6 +44,34 @@ router.get("/:_id", async (req, res) => {
   } catch (e) {
     return res.send(500).send(e);
   }
+});
+
+//查詢特定講師的課程
+router.get("/teacher/:teacher_id", async (req, res) => {
+  let { teacher_id } = req.params;
+  let courseFound = await Course.find({ teacher: teacher_id })
+    .populate("teacher", ["username", "eamil"])
+    .exec();
+  return res.send(courseFound);
+});
+
+//查詢特定學生註冊課程
+router.get("/student/:student_id", async (req, res) => {
+  let { student_id } = req.params;
+  let courseFound = await Course.find({ students: student_id })
+    .populate("teacher", ["username", "email"])
+    .exec();
+  return res.send(courseFound);
+});
+
+//利用課程ID註冊課程
+router.post("/enroll/:_id", async (req, res) => {
+  let { _id } = req.params;
+  console.log(_id);
+  let course = await Course.findOne({ _id }).exec();
+  course.students.push(req.user._id);
+  await course.save();
+  res.send("註冊完成");
 });
 
 //新增課程

@@ -4,11 +4,12 @@ import CourseService from "../services/course.service";
 
 const EnrollComponent = (props) => {
   let { currentUser, setCurrentUser } = props;
-  const navigate = useNavigate();
   let [searchInput, setSearchInput] = useState("");
   let [searchResult, setSearchResult] = useState(null);
+  const nav = useNavigate();
+
   const handleTakeToLogin = () => {
-    navigate("/login");
+    nav("/login");
   };
   const handleChangeInput = (e) => {
     setSearchInput(e.target.value);
@@ -27,7 +28,7 @@ const EnrollComponent = (props) => {
     CourseService.enroll(e.target.id)
       .then(() => {
         window.alert("課程註冊成功。重新導向到課程頁面。");
-        navigate("/course");
+        nav("/course");
       })
       .catch((err) => {
         console.log(err);
@@ -60,7 +61,7 @@ const EnrollComponent = (props) => {
             className="form-control"
           />
           <button onClick={handleSearch} className="btn btn-primary">
-            Search
+            搜尋課程
           </button>
         </div>
       )}

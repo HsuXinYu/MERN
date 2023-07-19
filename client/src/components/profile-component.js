@@ -8,7 +8,7 @@ const ProfileComponent = ({ currentUser, setCurrentUser }) => {
       {!currentUser && <div>在獲取您的個人資料之前，您必須先登錄。</div>}
       {currentUser && (
         <div>
-          <h2>以下是您的個人檔案：</h2>
+          <h2>以下是您的個人資料：</h2>
 
           <table className="table">
             <tbody>

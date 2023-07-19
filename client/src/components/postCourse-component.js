@@ -8,9 +8,10 @@ const PostCourseComponent = (props) => {
   let [description, setDescription] = useState("");
   let [price, setPrice] = useState(0);
   let [message, setMessage] = useState("");
-  const navigate = useNavigate();
+  const nav = useNavigate();
+
   const handleTakeToLogin = () => {
-    navigate("/login");
+    nav("/login");
   };
   const handleChangeTitle = (e) => {
     setTitle(e.target.value);
@@ -25,7 +26,7 @@ const PostCourseComponent = (props) => {
     CourseService.post(title, description, price)
       .then(() => {
         window.alert("新課程已創建成功");
-        navigate("/course");
+        nav("/course");
       })
       .catch((error) => {
         console.log(error.response);
@@ -46,12 +47,12 @@ const PostCourseComponent = (props) => {
           </button>
         </div>
       )}
-      {currentUser && currentUser.user.role !== "instructor" && (
+      {currentUser && currentUser.user.role !== "teacher" && (
         <div>
           <p>只有講師可以發布新課程。</p>
         </div>
       )}
-      {currentUser && currentUser.user.role == "instructor" && (
+      {currentUser && currentUser.user.role == "teacher" && (
         <div className="form-group">
           <label for="exampleforTitle">課程標題：</label>
           <input

@@ -44,7 +44,7 @@ const HomeComponent = () => {
         </div>
 
         <footer className="pt-3 mt-4 text-muted border-top">
-          &copy; 2023 HSU XIN YU
+          © 2023 HSU XIN YU All Rights Reserved
         </footer>
       </div>
     </main>
