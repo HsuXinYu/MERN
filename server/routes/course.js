@@ -69,9 +69,13 @@ router.post("/enroll/:_id", async (req, res) => {
   let { _id } = req.params;
   console.log(_id);
   let course = await Course.findOne({ _id }).exec();
-  course.students.push(req.user._id);
-  await course.save();
-  res.send("註冊完成");
+  if (!course.students.includes(req.user._id)) {
+    course.students.push(req.user._id);
+    await course.save();
+    res.send("註冊成功");
+  } else {
+    res.send("註冊失敗");
+  }
 });
 
 //新增課程

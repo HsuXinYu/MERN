@@ -4,9 +4,21 @@ import CourseService from "../services/course.service";
 
 const EnrollComponent = (props) => {
   let { currentUser, setCurrentUser } = props;
+  let [courseData, setCourseData] = useState(null);
   let [searchInput, setSearchInput] = useState("");
   let [searchResult, setSearchResult] = useState(null);
   const nav = useNavigate();
+
+  useEffect(() => {
+    CourseService.getCourse()
+      .then((data) => {
+        console.log(data);
+        setCourseData(data.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }, []);
 
   const handleTakeToLogin = () => {
     nav("/login");
@@ -14,21 +26,43 @@ const EnrollComponent = (props) => {
   const handleChangeInput = (e) => {
     setSearchInput(e.target.value);
   };
-  const handleSearch = () => {
-    CourseService.getCourseByName(searchInput)
-      .then((data) => {
-        console.log(data);
-        setSearchResult(data.data);
-      })
-      .catch((err) => {
-        console.log(err);
+  const handleSearch = (e) => {
+    if (searchInput) {
+      let courseFound = courseData.filter((course) => {
+        let content = course.title.toLowerCase();
+        let keyword = searchInput.toLowerCase();
+        return content.indexOf(keyword) != -1;
       });
+      setSearchResult(courseFound);
+    } else {
+      CourseService.getCourse()
+        .then((data) => {
+          console.log(data);
+          setCourseData(data.data);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
+    // CourseService.getCourseByName(searchInput)
+    //   .then((data) => {
+    //     console.log(data);
+    //     setSearchResult(data.data);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
   };
   const handleEnroll = (e) => {
     CourseService.enroll(e.target.id)
-      .then(() => {
-        window.alert("課程註冊成功。重新導向到課程頁面。");
-        nav("/course");
+      .then((res) => {
+        console.log(res);
+        if (res == "註冊成功") {
+          window.alert("課程註冊成功。重新導向到課程頁面。");
+          nav("/course");
+        } else {
+          window.alert("你已註冊過此課程。");
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -66,10 +100,40 @@ const EnrollComponent = (props) => {
         </div>
       )}
       {currentUser && searchResult && searchResult.length != 0 && (
-        <div>
-          <p>我們從 API 返回的數據。</p>
+        <div className="row mt-3">
           {searchResult.map((course) => (
-            <div key={course._id} className="card" style={{ width: "18rem" }}>
+            <div
+              key={course._id}
+              className="card m-1"
+              style={{ width: "18rem" }}
+            >
+              <div className="card-body">
+                <h5 className="card-title">課程名稱：{course.title}</h5>
+                <p className="card-text">{course.description}</p>
+                <p>價格: {course.price}</p>
+                <p>目前的學生人數: {course.students.length}</p>
+                <a
+                  href="#"
+                  onClick={handleEnroll}
+                  className="card-text btn btn-primary"
+                  id={course._id}
+                >
+                  註冊課程
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      {currentUser && courseData && courseData.length != 0 && (
+        <div className="row mt-3">
+          <p>所有課程</p>
+          {courseData.map((course) => (
+            <div
+              key={course._id}
+              className="card m-1"
+              style={{ width: "18rem" }}
+            >
               <div className="card-body">
                 <h5 className="card-title">課程名稱：{course.title}</h5>
                 <p className="card-text">{course.description}</p>

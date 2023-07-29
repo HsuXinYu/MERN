@@ -31,7 +31,20 @@ class CourseService {
     });
   }
 
-  //找尋課程
+  //找尋全部課程
+  getCourse() {
+    let token;
+    if (localStorage.getItem("user")) {
+      token = JSON.parse(localStorage.getItem("user")).token;
+    } else {
+      token = "";
+    }
+    return axios.get(API_URL + "/", {
+      headers: { Authorization: token },
+    });
+  }
+
+  //找尋特定課程
   getCourseByName(name) {
     let token;
     if (localStorage.getItem("user")) {
