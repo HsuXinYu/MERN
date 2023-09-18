@@ -57,7 +57,7 @@ const EnrollComponent = (props) => {
     CourseService.enroll(e.target.id)
       .then((res) => {
         console.log(res);
-        if (res == "註冊成功") {
+        if (res.data == "註冊成功") {
           window.alert("課程註冊成功。重新導向到課程頁面。");
           nav("/course");
         } else {
